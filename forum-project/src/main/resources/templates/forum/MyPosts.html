@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Forum</title>
+	<div th:replace="forum/head :: head"></div>
+</head>
+
+<body>
+	<div th:replace="forum/navbar :: navbar"></div>
+	<div class="d-flex justify-content-center mt-4">
+		<div class="container mt-5">
+			<h1 class="text-center justify-content-center">My Posts</h1>
+
+			<div th:each="post : ${posts}">
+				<div class="card mb-4" style="width: 35rem;margin-left: auto;margin-right: auto;">
+					<div class="card-body">
+						<h3 class="card-header text-center" th:text="${post.title}">Post Title</h3>
+						<!--                        <h3 th:text="${post.title}" class="card-title"></h3>-->
+
+						<p><span th:text="${post.content}"></span></p>
+						
+						<p class="small" th:if="${post.updatedAt} == NULL">Created at: <span
+								th:text="${#calendars.format(post.createdAt, 'dd/MMM/yyyy HH:mm z')}"></span>
+						</p>
+						<p class="small" th:if="${post.updatedAt} != NULL">Updated at: <span
+								th:text="${#calendars.format(post.updatedAt, 'dd/MMM/yyyy HH:mm z')}"></span>
+						</p>
+						
+						<div class="d-flex justify-content-between">
+							<form th:action="@{/forum/post/{id}(id=${post.id})}" method="get">
+								<button type="submit" class="btn btn-dark">View Details</button>
+							</form>
+							<form th:action="@{/forum/post/{id}/edit(id=${post.id})}" method="get">
+								<button type="submit" class="btn btn-dark">Edit</button>
+							</form>
+							<form th:action="@{/forum/post/{id}/delete(id=${post.id})}" method="post" id="deleteconfirm">
+								<button type="submit" class="btn btn-danger">Delete</button>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<div th:replace="forum/scripts :: scripts"></div>
+	
+	<script>
+    // Add an event listener for each form
+    document.querySelectorAll('[id^="deleteconfirm"]').forEach(function(form) {
+        form.addEventListener("submit", function(event) {
+            var confirmation = window.confirm("Are you sure you want to delete?");
+            if (!confirmation) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+	
+</body>
+
+</html>
